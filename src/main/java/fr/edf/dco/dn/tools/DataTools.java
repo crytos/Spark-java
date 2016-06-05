@@ -5,8 +5,12 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.VoidFunction;
+import org.apache.spark.rdd.RDD;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
@@ -15,6 +19,7 @@ import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
+import scala.Tuple2;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -64,12 +69,12 @@ public class DataTools {
      * @return
      */
     static public DataFrame retrieveDataFromHiveTable(HiveContext hive_context, String db_name, String db_table) {
-        DataFrame result = hive_context.table(db_name + "." + db_table);
+        DataFrame result = hive_context.table("sqoop_import.categories");
         return result;
     }
 
     static public DataFrame retrieveDataForTest(HiveContext hive_context, String db_name, String db_table, int limit) {
-        String query = "SELECT * FROM " + db_name + "." + db_table + " LIMIT "+limit;
+        String query = "SELECT * FROM " + db_name + "." + db_table + " LIMIT " + limit;
         DataFrame result = hive_context.sql(query);
         return result;
     }
@@ -147,7 +152,7 @@ public class DataTools {
         String format_sortie = "png";
         String suffix = hashMapOfImages.entrySet().iterator().next().getKey().substring(0, 5);
 
-        String path = target_directory + "Archive-" + suffix+".zip";
+        String path = target_directory + "Archive-" + suffix + ".zip";
 
         ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(new File(path))));
 
@@ -189,6 +194,42 @@ public class DataTools {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    static public void doingThingsWithDataFrames(DataFrame dataFrame) {
+
+        JavaRDD<Row> rdd = dataFrame.toJavaRDD();
+
+        List<String> categories = dataFrame.javaRDD().map(new Function<Row, String>() {
+            public String call(Row row) {
+                return "Categorie : " + row.getString(2);
+            }
+        }).collect();
+
+        JavaRDD<Row> filteredCategories = dataFrame.javaRDD().filter(new Function<Row, Boolean>() {
+            public Boolean call(Row row) throws Exception {
+                return ((Integer) row.get(0) > 10) ? true : false;
+            }
+        });
+
+        filteredCategories.saveAsTextFile("hdfs://quickstart.cloudera:8020/user/cloudera/output/filtered_categories_rdd.txt");
+
+
+        rdd.saveAsTextFile("hdfs://quickstart.cloudera:8020/user/cloudera/output/result_rdd.txt");
+
+
+        JavaRDD<Tuple2<Integer, String>> rddTuple = dataFrame.javaRDD().map(new Function<Row, Tuple2<Integer, String>>() {
+            public Tuple2<Integer, String> call(Row row) throws Exception {
+                return new Tuple2<Integer, String>((Integer) row.get(0), (String) row.get(2));
+            }
+        });
+
+        rddTuple.saveAsTextFile("hdfs://quickstart.cloudera:8020/user/cloudera/output/result_rddTuple.txt");
+
+        /*JavaPairRDD can be obtained from JavaRDD of Tuple2 : JavaRDD<Tuple2<k, v>> */
+        JavaPairRDD<Integer, String> pairRDD = JavaPairRDD.fromJavaRDD(rddTuple);
+
+        //pairRDD.saveAsHadoopFile("hdfs://quickstart.cloudera:8020/user/cloudera/output/result_rddTuple.txt", );
     }
 }
 
