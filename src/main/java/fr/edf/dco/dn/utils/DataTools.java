@@ -1,4 +1,4 @@
-package fr.edf.dco.dn.tools;
+package fr.edf.dco.dn.utils;
 
 import fr.edf.dco.dn.graphics.ImageFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -7,10 +7,8 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.VoidFunction;
-import org.apache.spark.rdd.RDD;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;

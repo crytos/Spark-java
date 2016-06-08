@@ -1,4 +1,4 @@
-package fr.edf.dco.dn.tools;
+package fr.edf.dco.dn.utils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

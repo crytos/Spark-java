@@ -1,4 +1,4 @@
-package fr.edf.dco.dn.factory;
+package fr.edf.dco.dn.contextFactory;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;

@@ -1,15 +1,14 @@
-package fr.edf.dco.dn.graphics;
+package fr.edf.dco.dn.Batch;
 
-import fr.edf.dco.dn.factory.SQLContextFactory;
-import fr.edf.dco.dn.factory.SparkContextFactory;
+import fr.edf.dco.dn.contextFactory.SQLContextFactory;
+import fr.edf.dco.dn.contextFactory.SparkContextFactory;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.hive.HiveContext;
-import fr.edf.dco.dn.tools.DataTools;
-import fr.edf.dco.dn.tools.PropertiesLoader;
+import fr.edf.dco.dn.utils.DataTools;
+import fr.edf.dco.dn.utils.PropertiesLoader;
 
 import java.io.IOException;
-import java.util.*;
 
 import static jodd.util.ClassLoaderUtil.getResourceAsStream;
 
@@ -17,7 +16,7 @@ import static jodd.util.ClassLoaderUtil.getResourceAsStream;
 /**
  * Created by Anès Mahi on 12/05/2016.
  */
-public class GraphicsGen {
+public class RunGraphicsGeneration {
 
 
     public static void main(String[] args) throws IOException {
@@ -40,16 +39,19 @@ public class GraphicsGen {
         //hive_context.setConf("hive.metastore.client.connect.retry.delay", String.valueOf(5));
         //hive_context.setConf("hive.execution.engine", "mr");
 
-        DataFrame dataSource = DataTools.retrieveDataForTest(hive_context, dbName, dbTable, Integer.valueOf(args[0]));
+        DataFrame dataSource = DataTools.retrieveDataFromHiveTable(hive_context, dbName, dbTable);
+
+        DataTools.doingThingsWithDataFrames(dataSource);
+
 
         // -- Local Test
         //SQLContext sqlContext = SQLContextFactory.getInstance(javaSparkContext);
         //DataFrame dataSource = DataTools.csvToDf(sqlContext, "input/customers_data.csv");
 
         /* Use the JavaRDD struct to create images*/
-        Properties imageProperties = propLoader.getImagesProp();
+        //Properties imageProperties = propLoader.getImagesProp();
         // Try the coalesce method applied to the JavaRDD
-        DataTools.generateImages(dataSource.repartition(Integer.valueOf(args[1])).toJavaRDD(), imageProperties);
+        //DataTools.generateImages(dataSource.repartition(Integer.valueOf(args[1])).toJavaRDD(), imageProperties);
 
     }
 }

@@ -16,7 +16,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>fr.edf.dco.dn.graphics.GraphicsGen</mainClass>
+                            <mainClass>fr.edf.dco.dn.Batch.RunGraphicsGeneration</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
