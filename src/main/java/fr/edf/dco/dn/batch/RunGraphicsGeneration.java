@@ -1,4 +1,4 @@
-package fr.edf.dco.dn.Batch;
+package fr.edf.dco.dn.batch;
 
 import fr.edf.dco.dn.contextFactory.SQLContextFactory;
 import fr.edf.dco.dn.contextFactory.SparkContextFactory;
