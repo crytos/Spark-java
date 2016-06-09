@@ -41,7 +41,6 @@ public class RunGraphicsGeneration {
 
         DataTools.doingThingsWithDataFrames(dataSource);
 
-
         /* Use the JavaRDD struct to create images*/
         //Properties imageProperties = propLoader.getImagesProp();
         // Try the coalesce method applied to the JavaRDD
