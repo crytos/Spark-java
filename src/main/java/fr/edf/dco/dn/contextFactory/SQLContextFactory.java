@@ -11,7 +11,8 @@ import org.apache.spark.sql.hive.HiveContext;
 
 public class SQLContextFactory {
 
-    static private transient SQLContext sql_instance = null;
+    static private SQLContext sql_instance = null;
+
     static public SQLContext getInstance(JavaSparkContext java_spark_context) {
 
         if (sql_instance == null) {
@@ -20,8 +21,9 @@ public class SQLContextFactory {
         return sql_instance;
     }
 
-    static private transient HiveContext hive_instance = null;
-    static public HiveContext getHiveInstance(SparkContext spark_context){
+    static private HiveContext hive_instance = null;
+
+    static public HiveContext getHiveInstance(SparkContext spark_context) {
         if (hive_instance == null) {
             hive_instance = new HiveContext(spark_context);
         }

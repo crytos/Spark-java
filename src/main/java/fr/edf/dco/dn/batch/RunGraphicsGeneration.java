@@ -4,6 +4,7 @@ import fr.edf.dco.dn.contextFactory.SQLContextFactory;
 import fr.edf.dco.dn.contextFactory.SparkContextFactory;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.hive.HiveContext;
 import fr.edf.dco.dn.utils.DataTools;
 import fr.edf.dco.dn.utils.PropertiesLoader;
@@ -32,21 +33,14 @@ public class RunGraphicsGeneration {
 
         /*Creation the application configuration and the JavaSparkContext*/
         SparkContextFactory scf = new SparkContextFactory("Poc13"); //add appName in properties
-        JavaSparkContext javaSparkContext = scf.create();
+        JavaSparkContext javaSparkContext = scf.getSparkContext();
 
         /* Create the HiveContext and load data to be used in images generation.*/
         HiveContext hive_context = SQLContextFactory.getHiveInstance(JavaSparkContext.toSparkContext(javaSparkContext));
-        //hive_context.setConf("hive.metastore.client.connect.retry.delay", String.valueOf(5));
-        //hive_context.setConf("hive.execution.engine", "mr");
-
         DataFrame dataSource = DataTools.retrieveDataFromHiveTable(hive_context, dbName, dbTable);
 
         DataTools.doingThingsWithDataFrames(dataSource);
 
-
-        // -- Local Test
-        //SQLContext sqlContext = SQLContextFactory.getInstance(javaSparkContext);
-        //DataFrame dataSource = DataTools.csvToDf(sqlContext, "input/customers_data.csv");
 
         /* Use the JavaRDD struct to create images*/
         //Properties imageProperties = propLoader.getImagesProp();

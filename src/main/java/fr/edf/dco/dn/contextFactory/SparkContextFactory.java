@@ -9,35 +9,18 @@ import org.apache.spark.api.java.JavaSparkContext;
  */
 public class SparkContextFactory {
 
-    public SparkConf sparkConf;
+    static public SparkConf sparkConf;
 
 
     public SparkContextFactory(String appName) {
-        this.sparkConf = this.createSparkConf(appName);
+        this.sparkConf = new SparkConf().setAppName(appName);//.setMaster("local[*]");
     }
 
-    private SparkConf createSparkConf(String appName) {
-        return new SparkConf().setAppName(appName);
-                //.setMaster("local[*]");
-    }
-
-    private SparkContext createSparkContext(String master, String appName) {
-        return new SparkContext(this.sparkConf);
-    }
-
-    private JavaSparkContext createJavaSparkContext() {
-        return new JavaSparkContext(this.sparkConf);
-    }
-
-    public JavaSparkContext create() {
-        return createJavaSparkContext();
-    }
-
-    static private transient JavaSparkContext sparkContext = null;
+    static private JavaSparkContext sparkContext = null;
 
     static public JavaSparkContext getSparkContext() {
         if (sparkContext == null) {
-            sparkContext = new JavaSparkContext();
+            sparkContext = new JavaSparkContext(sparkConf);
         }
         return sparkContext;
     }

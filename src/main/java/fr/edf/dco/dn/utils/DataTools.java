@@ -33,34 +33,6 @@ import java.util.zip.ZipOutputStream;
 public class DataTools {
 
     /**
-     * @param sqlContext
-     * @param dataSourceFile
-     * @return
-     */
-    static public DataFrame csvToDf(SQLContext sqlContext, String dataSourceFile) {
-        DataFrame dataSourceDF = sqlContext.read()
-                .format("com.databricks.spark.csv")
-                .option("header", "false").option("delimiter", ";")
-                //.option("mode", "PERMISSIVE").option("charset", "UTF-8")
-                //.option("quote","£")
-                .schema(DataTools.createCustomSchema())
-                .load(dataSourceFile);
-
-        return dataSourceDF;
-    }
-
-    static public StructType createCustomSchema() {
-        StructType customSchema = new StructType(new StructField[]{
-                new StructField("Id_customer", DataTypes.StringType, true, Metadata.empty()),
-                new StructField("home", DataTypes.IntegerType, true, Metadata.empty()),
-                new StructField("home_similar", DataTypes.IntegerType, true, Metadata.empty()),
-                new StructField("home_similar_low", DataTypes.IntegerType, true, Metadata.empty())
-        });
-
-        return customSchema;
-    }
-
-    /**
      * @param hive_context
      * @param db_name
      * @param db_table
