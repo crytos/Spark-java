@@ -33,9 +33,9 @@ public class DataTools {
 
     /**
      * @param hive_context
+     * @param tableName
      * @return
      */
-
 
     static public DataFrame getTable(HiveContext hive_context, String tableName) {
         return hive_context.table("sqoop_import."+tableName);
