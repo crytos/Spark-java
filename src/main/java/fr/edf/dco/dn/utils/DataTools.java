@@ -1,6 +1,5 @@
 package fr.edf.dco.dn.utils;
 
-import fr.edf.dco.dn.graphics.ImageFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -34,13 +33,20 @@ public class DataTools {
 
     /**
      * @param hive_context
-     * @param db_name
-     * @param db_table
      * @return
      */
-    static public DataFrame retrieveDataFromHiveTable(HiveContext hive_context, String db_name, String db_table) {
-        DataFrame result = hive_context.table("sqoop_import.categories");
-        return result;
+
+
+    static public DataFrame getTable(HiveContext hive_context, String tableName) {
+        return hive_context.table("sqoop_import."+tableName);
+    }
+
+
+    static public DataFrame getCustomersOrders(HiveContext hive_context) {
+        DataFrame orders = hive_context.table("sqoop_import.orders");
+        DataFrame customers = hive_context.table("sqoop_import.customers");
+
+        return orders.join(customers, customers.col("customer_id").equalTo(orders.col("order_customer_id"))).drop("customer_id");
     }
 
     static public DataFrame retrieveDataForTest(HiveContext hive_context, String db_name, String db_table, int limit) {
@@ -50,7 +56,7 @@ public class DataTools {
     }
 
 
-    static public void generateImages(JavaRDD<Row> dataSource, final Properties imageProperties) {
+    static public void generateZip(JavaRDD<Row> dataSource) {
 
         dataSource.foreachPartition(new VoidFunction<Iterator<Row>>() {
             /* For each row in the each partition of the Java RDD  we create the corresponding image
@@ -58,123 +64,38 @@ public class DataTools {
             HashMap<String, BufferedImage> hashMapOfImages = new HashMap<String, BufferedImage>();
 
             public void call(Iterator<Row> rowIterator) throws Exception {
-                ImageFactory imageFactory = new ImageFactory();
                 while (rowIterator.hasNext()) {
                     Row row = rowIterator.next();
-                    BufferedImage img = imageFactory.createImage(row, imageProperties);
-                    hashMapOfImages.put(row.get(0).toString(), img);
+                    hashMapOfImages.put(row.get(0).toString(), null);
                 }
                 /*
                 * Use the hash map to store images against HDFS*/
-                DataTools.writeToHDFS(hashMapOfImages, imageProperties);
+                //DataTools.writeToHDFS(hashMapOfImages);
                 //DataTools.writeToLocal(hashMapOfImages, imageProperties);
             }
         });
     }
 
-    static public void writeToHDFS(HashMap<String, BufferedImage> hashMapOfImages, Properties imageProperties) throws IOException {
+    static public void saveCustomersOrdersToHDFS(DataFrame dataFrame) {
 
-        String HDFSOutputDirectory = imageProperties.getProperty("img.output_directory");
-        String fileType = imageProperties.getProperty("img.type");
-        String archivePrefix = imageProperties.getProperty("img.archives.prefix");
-        String archiveType = imageProperties.getProperty("img.archive.type");
+        JavaRDD<Row> customers_orderRdd = dataFrame.toJavaRDD();
 
-        FileSystem HDFS = FileSystem.get(new Configuration());
-
-        // A way (that can be changed) to generate unique names for the generated zip
-        String suffix = hashMapOfImages.entrySet().iterator().next().getKey();
-        System.out.println(suffix);
-
-        // Create the ZIP file
-        String zipName = archivePrefix + "-" + suffix.substring(0, 5) + "." + archiveType;
-
-        String zipHDFSPath = HDFS.getHomeDirectory() + HDFSOutputDirectory + zipName;
-        Path path = new Path(zipHDFSPath);
-        FSDataOutputStream out = HDFS.create(path);
-
-        // Create the zip output stream that will use the HDFS output stream
-        ZipOutputStream zipOut = new ZipOutputStream(out);
-
-        /* Iterate over an hash map having the customer ID (BP) as key and the buffered Image as value
-        *  Each entry will be stored against HDFS as an image file.*/
-        for (Map.Entry<String, BufferedImage> entry : hashMapOfImages.entrySet()) {
-
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(entry.getValue(), fileType, outputStream);
-            byte[] bytes = outputStream.toByteArray();
-
-            String fileName = entry.getKey() + "-" + new Date().getTime() + "." + fileType;
-            ZipEntry e = new ZipEntry(fileName);
-            zipOut.putNextEntry(e);
-
-            // Transfer bytes from the file to the ZIP file
-            zipOut.write(bytes);
-            zipOut.closeEntry();
-        }
-        zipOut.close();
-        out.close();
-    }
-
-    static public void writeToLocal(HashMap<String, BufferedImage> hashMapOfImages, Properties ImageProperties) throws IOException {
-
-        // make sur output directory exists.
-        String target_directory = "output/";
-        String format_sortie = "png";
-        String suffix = hashMapOfImages.entrySet().iterator().next().getKey().substring(0, 5);
-
-        String path = target_directory + "Archive-" + suffix + ".zip";
-
-        ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(new File(path))));
-
-        for (Map.Entry<String, BufferedImage> entry : hashMapOfImages.entrySet()) {
-
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(entry.getValue(), format_sortie, outputStream);
-            byte[] bytes = outputStream.toByteArray();
-
-            String fileName = entry.getKey() + "-" + new Date().getTime() + "." + format_sortie;
-            ZipEntry e = new ZipEntry(fileName);
-            zipOut.putNextEntry(e);
-
-            // Transfer bytes from the file to the ZIP file
-            zipOut.write(bytes);
-            zipOut.closeEntry();
-
-            //BufferedImage new_img = entry.getValue();
-            //File output_file = new File(target_directory + entry.getKey() + "." + format_sortie);
-            /*
-            try {
-                if (new_img != null)
-                    ImageIO.write(new_img, format_sortie, out);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
-        }
-        zipOut.close();
-    }
-
-    static public void writeToLocal(BufferedImage new_img, String file_name) {
-
-        String target_directory = "output/";
-        String format_sortie = "png";
-        File output_file = new File(target_directory + file_name + "." + format_sortie);
-        try {
-            if (new_img != null)
-                ImageIO.write(new_img, format_sortie, output_file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static public void doingThingsWithDataFrames(DataFrame dataFrame) {
-
-        JavaRDD<Row> rdd = dataFrame.toJavaRDD();
-
-        List<String> categories = dataFrame.javaRDD().map(new Function<Row, String>() {
+        List<String> customers_order = customers_orderRdd.map(new Function<Row, String>() {
             public String call(Row row) {
-                return "Categorie : " + row.getString(2);
+                return row.toString();
             }
         }).collect();
+
+        for (String s : customers_order) {
+            System.out.println(s);
+        }
+
+        customers_orderRdd.saveAsTextFile("hdfs://quickstart.cloudera:8020/user/cloudera/output/customers_orders");
+    }
+
+    static public void someFunctionsOnRDD(DataFrame dataFrame) {
+
+        JavaRDD<Row> rdd = dataFrame.toJavaRDD();
 
         JavaRDD<Row> filteredCategories = dataFrame.javaRDD().filter(new Function<Row, Boolean>() {
             public Boolean call(Row row) throws Exception {
@@ -182,11 +103,9 @@ public class DataTools {
             }
         });
 
-        filteredCategories.saveAsTextFile("hdfs://quickstart.cloudera:8020/user/cloudera/output/filtered_categories_rdd.txt");
+        filteredCategories.saveAsTextFile("hdfs://quickstart.cloudera:8020/user/cloudera/output/filtered_categories_rdd");
 
-
-        rdd.saveAsTextFile("hdfs://quickstart.cloudera:8020/user/cloudera/output/result_rdd.txt");
-
+        rdd.saveAsTextFile("hdfs://quickstart.cloudera:8020/user/cloudera/output/result_rdd");
 
         JavaRDD<Tuple2<Integer, String>> rddTuple = dataFrame.javaRDD().map(new Function<Row, Tuple2<Integer, String>>() {
             public Tuple2<Integer, String> call(Row row) throws Exception {
@@ -194,7 +113,7 @@ public class DataTools {
             }
         });
 
-        rddTuple.saveAsTextFile("hdfs://quickstart.cloudera:8020/user/cloudera/output/result_rddTuple.txt");
+        rddTuple.saveAsTextFile("hdfs://quickstart.cloudera:8020/user/cloudera/output/result_rddTuple");
 
         /*JavaPairRDD can be obtained from JavaRDD of Tuple2 : JavaRDD<Tuple2<k, v>> */
         JavaPairRDD<Integer, String> pairRDD = JavaPairRDD.fromJavaRDD(rddTuple);

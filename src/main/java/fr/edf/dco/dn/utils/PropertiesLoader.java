@@ -12,19 +12,13 @@ public class PropertiesLoader {
 
 
     private Properties dbProp;
-    private Properties imagesProp;
 
-    public PropertiesLoader(String dbPropertiesFileName, String imagesPropertiesFileName) throws IOException {
+    public PropertiesLoader(String dbPropertiesFileName) throws IOException {
         this.dbProp = (dbPropertiesFileName != null) ? this.loadPropertiesFile(dbPropertiesFileName) : null;
-        this.imagesProp = (imagesPropertiesFileName != null) ? this.loadPropertiesFile(imagesPropertiesFileName) : null;
     }
 
     public Properties getDbProp() {
         return this.dbProp;
-    }
-
-    public Properties getImagesProp() {
-        return this.imagesProp;
     }
 
 

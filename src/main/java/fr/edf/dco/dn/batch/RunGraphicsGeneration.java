@@ -23,10 +23,9 @@ public class RunGraphicsGeneration {
     public static void main(String[] args) throws IOException {
 
         String dbPropertiesFileName = "/properties/database.properties";
-        String imagesPropertiesFileName = "/properties/images.properties";
 
         /* Use the PropertiesLoader class to retrieve database and images properties*/
-        PropertiesLoader propLoader = new PropertiesLoader(dbPropertiesFileName, imagesPropertiesFileName);
+        PropertiesLoader propLoader = new PropertiesLoader(dbPropertiesFileName);
 
         String dbName = propLoader.getDbProp().getProperty("db.name");
         String dbTable = propLoader.getDbProp().getProperty("db.table.name");
@@ -37,9 +36,12 @@ public class RunGraphicsGeneration {
 
         /* Create the HiveContext and load data to be used in images generation.*/
         HiveContext hive_context = SQLContextFactory.getHiveInstance(JavaSparkContext.toSparkContext(javaSparkContext));
-        DataFrame dataSource = DataTools.retrieveDataFromHiveTable(hive_context, dbName, dbTable);
 
-        DataTools.doingThingsWithDataFrames(dataSource);
+        DataFrame customersOrders = DataTools.getCustomersOrders(hive_context);
+        DataTools.saveCustomersOrdersToHDFS(customersOrders);
+
+        DataFrame categories = DataTools.getTable(hive_context, "categories");
+        DataTools.someFunctionsOnRDD(categories);
 
         /* Use the JavaRDD struct to create images*/
         //Properties imageProperties = propLoader.getImagesProp();
