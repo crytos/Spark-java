@@ -12,8 +12,8 @@ public class SparkContextFactory {
     static public SparkConf sparkConf;
 
 
-    public SparkContextFactory(String appName) {
-        this.sparkConf = new SparkConf().setAppName(appName);//.setMaster("local[*]");
+    public SparkContextFactory() {
+        this.sparkConf = new SparkConf();//.setAppName("APP-SPARK").setMaster("local[*]");
     }
 
     static private JavaSparkContext sparkContext = null;

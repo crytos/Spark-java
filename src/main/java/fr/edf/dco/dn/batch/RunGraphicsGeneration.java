@@ -2,6 +2,7 @@ package fr.edf.dco.dn.batch;
 
 import fr.edf.dco.dn.contextFactory.SQLContextFactory;
 import fr.edf.dco.dn.contextFactory.SparkContextFactory;
+import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.SQLContext;
@@ -10,6 +11,7 @@ import fr.edf.dco.dn.utils.DataTools;
 import fr.edf.dco.dn.utils.PropertiesLoader;
 
 import java.io.IOException;
+import java.security.PrivilegedAction;
 
 import static jodd.util.ClassLoaderUtil.getResourceAsStream;
 
@@ -27,26 +29,27 @@ public class RunGraphicsGeneration {
         /* Use the PropertiesLoader class to retrieve database and images properties*/
         PropertiesLoader propLoader = new PropertiesLoader(dbPropertiesFileName);
 
-        String dbName = propLoader.getDbProp().getProperty("db.name");
-        String dbTable = propLoader.getDbProp().getProperty("db.table.name");
+        String path = "hdfs://quickstart.cloudera:8020/user/cloudera/spark/java/";
 
-        /*Creation the application configuration and the JavaSparkContext*/
-        SparkContextFactory scf = new SparkContextFactory("Poc13"); //add appName in properties
+        /*Create the application configuration and the JavaSparkContext*/
+        SparkContextFactory scf = new SparkContextFactory();
         JavaSparkContext javaSparkContext = scf.getSparkContext();
 
-        /* Create the HiveContext and load data to be used in images generation.*/
-        HiveContext hive_context = SQLContextFactory.getHiveInstance(JavaSparkContext.toSparkContext(javaSparkContext));
+        DataTools.cleanHDFSOutputDirectory();
+
+        /*
+        HiveContext hive_context = SQLContextFactory.getHiveInstance(javaSparkContext.sc());
 
         DataFrame customersOrders = DataTools.getCustomersOrders(hive_context);
         DataTools.saveCustomersOrdersToHDFS(customersOrders);
 
         DataFrame categories = DataTools.getTable(hive_context, "categories");
-        DataTools.someFunctionsOnRDD(categories);
+        categories.groupBy("category_department_id").count().javaRDD().saveAsTextFile(path + "categories_by_department");
 
-        /* Use the JavaRDD struct to create images*/
-        //Properties imageProperties = propLoader.getImagesProp();
-        // Try the coalesce method applied to the JavaRDD
-        //DataTools.generateImages(dataSource.repartition(Integer.valueOf(args[1])).toJavaRDD(), imageProperties);
+        DataFrame orders = DataTools.getTable(hive_context, "orders");
+        orders.groupBy("order_status").count().javaRDD().saveAsTextFile(path + "orders_by_status");
+
+        DataTools.someFunctionsOnRDD(categories);*/
 
     }
 }
