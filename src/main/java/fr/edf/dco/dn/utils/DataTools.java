@@ -10,13 +10,13 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.hive.HiveContext;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
-import org.codehaus.groovy.runtime.powerassert.SourceText;
 import scala.Tuple2;
 
 import javax.imageio.ImageIO;
@@ -68,6 +68,10 @@ public class DataTools {
             }
         }).collect();
 
+        for (String s : customers_order) {
+            System.out.println(s);
+        }
+
         customers_orderRdd.saveAsTextFile(Constants.HDFS_OUTPUT_DIRECTORY + "customers_orders");
     }
 
@@ -99,9 +103,13 @@ public class DataTools {
 
     static public void cleanHDFSOutputDirectory() throws IOException {
 
-        FileSystem  hdfs = FileSystem.get(new Configuration());
+        FileSystem hdfs = FileSystem.get(new Configuration());
+        Path p = new Path(Constants.HDFS_OUTPUT_DIRECTORY + "*");
         // @TODO implement *
-        hdfs.delete(new Path(Constants.HDFS_OUTPUT_DIRECTORY+"*"), true);
+        if (hdfs.exists(p)) {
+            hdfs.delete(p, true);
+        } else
+            System.out.println(p + " not find");
 
     }
 

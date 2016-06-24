@@ -5,6 +5,6 @@ package fr.edf.dco.dn.utils;
  */
 public interface Constants {
 
-    String DB_NAME = "sqoop_import";
-    String HDFS_OUTPUT_DIRECTORY = "hdfs://quickstart.cloudera:8020/user/cloudera/spark/java/";
+    String DB_NAME = "db.name";
+    String HDFS_OUTPUT_DIRECTORY = "output.directory";
 }
