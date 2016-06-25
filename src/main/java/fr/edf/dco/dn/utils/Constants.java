@@ -6,5 +6,6 @@ package fr.edf.dco.dn.utils;
 public interface Constants {
 
     String DB_NAME = "db.name";
+    String CUSTOMERS_ORDERS = "customers_orders";
     String HDFS_OUTPUT_DIRECTORY = "output.directory";
 }
