@@ -1,7 +1,16 @@
-# graphics-generation
-This application is a spark job that retrieves data from Hive database and generates images using the awt java library. 
-Images are saved in a specified number of zip files and stored against HDFS.
+#SPARK-JAVA
 
-The project can be executed as follow :
+##Description
 
-./script_name.sh number_of_records_to_retrieve number_of_partition_desired
+Getting familiar with Spark and Hive using the Java API
+
+
+##HADDOP COMPONENTS USED
+
+Spark 1.6
+Hive
+
+
+##LAUNCH 
+
+The project can be executed as follow : ./run-spark.sh
