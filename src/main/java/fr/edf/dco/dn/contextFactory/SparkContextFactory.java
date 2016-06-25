@@ -1,7 +1,6 @@
 package fr.edf.dco.dn.contextFactory;
 
 import org.apache.spark.SparkConf;
-import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaSparkContext;
 
 /**
@@ -9,20 +8,13 @@ import org.apache.spark.api.java.JavaSparkContext;
  */
 public class SparkContextFactory {
 
-    static public SparkConf sparkConf;
+	static private JavaSparkContext sparkContext = null;
 
-
-    public SparkContextFactory() {
-        this.sparkConf = new SparkConf();//.setAppName("APP-SPARK").setMaster("local[*]");
-    }
-
-    static private JavaSparkContext sparkContext = null;
-
-    static public JavaSparkContext getSparkContext() {
-        if (sparkContext == null) {
-            sparkContext = new JavaSparkContext(sparkConf);
-        }
-        return sparkContext;
-    }
+	static public JavaSparkContext getSparkContext() {
+		if (sparkContext == null) {
+			sparkContext = new JavaSparkContext(new SparkConf());
+		}
+		return sparkContext;
+	}
 
 }
