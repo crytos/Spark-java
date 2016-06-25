@@ -1,16 +1,15 @@
-#SPARK-JAVA
+# SPARK-JAVA
 
-##Description
+### DESCRIPTION
 
 Getting familiar with Spark and Hive using the Java API
 
+### HADDOP COMPONENTS USED
 
-##HADDOP COMPONENTS USED
+Spark 1.6   
 
-Spark 1.6
 Hive
 
-
-##LAUNCH 
+### LAUNCH 
 
 The project can be executed as follow : ./run-spark.sh
