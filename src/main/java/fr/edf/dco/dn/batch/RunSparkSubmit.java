@@ -32,31 +32,21 @@ public class RunSparkSubmit {
 		Properties dbProperties = propLoader.getDbProp();
 
 		/* Create the application configuration and the JavaSparkContext */
-		JavaSparkContext javaSparkContext = SparkContextFactory
-				.getSparkContext();
+		JavaSparkContext javaSparkContext = SparkContextFactory.getSparkContext();
 
 		// DataTools.cleanHDFSOutputDirectory();
 
-		HiveContext hive_context = SQLContextFactory
-				.getHiveInstance(javaSparkContext.sc());
+		HiveContext hive_context = SQLContextFactory.getHiveInstance(javaSparkContext.sc());
 
 		DataFrame customersOrders = DataTools.getCustomersOrders(hive_context);
-		customersOrders
-				.write()
-				.mode(SaveMode.Append)
-				.saveAsTable(
-						dbProperties.getProperty(Constants.DB_NAME) + "."
-								+ Constants.CUSTOMERS_ORDERS);
+		customersOrders.write().mode(SaveMode.Append).saveAsTable(dbProperties.getProperty(Constants.DB_NAME) + "."+ Constants.CUSTOMERS_ORDERS);
 
-		DataTools.saveCustomersOrdersToHDFS(customersOrders, dbProperties,
-				Constants.CUSTOMERS_ORDERS);
+		DataTools.saveCustomersOrdersToHDFS(customersOrders, dbProperties, Constants.CUSTOMERS_ORDERS);
 
-		DataFrame categories = DataTools.getTable(hive_context, dbProperties,
-				"categories");
+		DataFrame categories = DataTools.getTable(hive_context, dbProperties, "categories");
 		categories.groupBy(new Column("category_department_id")).count().show();
 
-		DataFrame orders = DataTools.getTable(hive_context, dbProperties,
-				"orders");
+		DataFrame orders = DataTools.getTable(hive_context, dbProperties, "orders");
 		orders.groupBy(new Column("order_status")).count().show();
 
 	}
