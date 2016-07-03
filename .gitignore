@@ -7,3 +7,6 @@ derby.log
 src/main/main.iml
 src/test/
 POC13.iml
+/.settings/
+.project
+.classpath
