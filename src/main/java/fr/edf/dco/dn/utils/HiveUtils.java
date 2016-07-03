@@ -14,7 +14,7 @@ import org.apache.spark.sql.hive.HiveContext;
 /**
  * Created by Anès Mahi on 13/05/2016.
  */
-public class DataTools {
+public class HiveUtils {
 
 	static Path getHDFSDirectory() throws IOException {
 
