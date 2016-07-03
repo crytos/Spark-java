@@ -2,7 +2,7 @@
 
 ### Description
 
-> Getting familiar with Spark and Hive using the Java API
+> Getting familiar with Spark, Hive and HBase using the Java API
 
 ### Launch
 
