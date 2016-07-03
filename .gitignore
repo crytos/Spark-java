@@ -1,12 +1,1 @@
-/.idea/
-/input/
-/output/
-/target/
-derby.log
-/metastore_db/
-src/main/main.iml
-src/test/
-POC13.iml
-/.settings/
-.project
-.classpath
+
