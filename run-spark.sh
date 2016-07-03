@@ -2,7 +2,7 @@
 
 SPARK_SUBMIT=/usr/bin/spark-submit
 
-OPTS="--name APP-SPARK --class fr.edf.dco.dn.batch.RunSparkSubmit --master yarn --deploy-mode cluster "
+OPTS="--name APP-SPARK --class fr.edf.dco.dn.batch.$1 --master yarn --deploy-mode cluster "
 
 OPTS+="--files /etc/hive/conf/hive-site.xml "
 
