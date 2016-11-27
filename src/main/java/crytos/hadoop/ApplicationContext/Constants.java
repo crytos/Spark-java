@@ -1,13 +1,14 @@
-package fr.edf.dco.dn.utils;
+package crytos.hadoop.ApplicationContext;
 
 /**
  * Created by cloudera on 6/17/16.
  */
 public interface Constants {
 
-	String DB_PROPERTIES_FILE_NAME = "/properties/database.properties";
+	//String DB_PROPERTIES_FILE_NAME = "/properties/vm-cloudera.properties";
 	
-    String DB_NAME = "db.name";
-    String CUSTOMERS_ORDERS = "customers_orders";
-    String HDFS_OUTPUT_DIRECTORY = "output.directory";
+    String HIVE_DB_NAME = "foodmart";
+    String HIVE_CUSTOMERS_TABLE_NAME = "customers";
+    
+    String HBASE_CUSTOMERS_TABLE_NAME = "customers";
 }
