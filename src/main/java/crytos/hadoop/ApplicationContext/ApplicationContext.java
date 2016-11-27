@@ -104,10 +104,10 @@ public class ApplicationContext {
 	// DATA MEMBERS
 	// ====================================================
 
-	static public 										ApplicationContext app = null;
-	static private 										Properties properties = null;
-	static private 										JavaSparkContext sparkContext = null;
-	static private 										SQLContext sqlInstance = null;
-	static private 										HiveContext hiveInstance = null;
+	static public 							ApplicationContext app = null;
+	static private 							Properties properties = null;
+	static private 							JavaSparkContext sparkContext = null;
+	static private 							SQLContext sqlInstance = null;
+	static private 							HiveContext hiveInstance = null;
 
 }
