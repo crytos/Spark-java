@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>fr.edf.dco.dn</groupId>
-	<artifactId>POC13</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<groupId>crytos.hadoop</groupId>
+	<artifactId>spark.practice</artifactId>
+	<version>0.1</version>
 
 
 	<build>
@@ -13,7 +13,7 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<!-- <archive> <manifest> <mainClass>fr.edf.dco.dn.batch.{$className}</mainClass> 
+					<!-- <archive> <manifest> <mainClass>crytos.hadoop.batch.{$className}</mainClass> 
 						</manifest> </archive> -->
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
