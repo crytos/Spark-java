@@ -1,16 +1,17 @@
 # SPARK-JAVA
 
-### Description
+## Description
 
 > Getting familiar with Spark, Hive and HBase using the Java API
 
-### Launch
+## Launch
 
-> The project can be executed as follow : ./run-spark.sh {JOB_NAME}
+> The project can be executed from the project root as follow : ./spark/spark-submit.sh {JOB_NAME}
 
-### Dependencies
+## Dependencies
 
 > * spark-core_2.10:1.6.0
 > * spark-sql_2.10:1.6.0
 > * spark-hive_2.10:1.6.0
-> * hbase-client:1.2.1
+> * hbase-server:1.2.4
+> * hbase-client:1.2.4
