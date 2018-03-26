@@ -72,7 +72,6 @@ public class ApplicationContext {
       hiveInstance = new HiveContext(sparkContext);
     }
     return hiveInstance;
-
   }
 
   /**
@@ -117,7 +116,12 @@ public class ApplicationContext {
     } else {
       throw new FileNotFoundException("property file '" + propertiesFileName + "' not found in the classpath");
     }
+    
     return properties;
+  }
+  
+  public Logger getLogger(){
+    return logger;
   }
 
   /*

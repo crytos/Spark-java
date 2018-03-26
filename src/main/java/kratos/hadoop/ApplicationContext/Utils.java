@@ -12,15 +12,13 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.Row;
 
-import com.google.protobuf.ServiceException;
-
 import scala.Tuple2;
 
 public class Utils {
 	
   public static ApplicationContext app = ApplicationContext.getInstance();
 	
-	static public DataFrame getHiveData(ApplicationContext app, String query){
+	static public DataFrame getHiveData(String query){
 		return app.getHiveInstance(app.getSparkContext().sc()).sql(query);
 	}
 	
