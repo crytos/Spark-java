@@ -1,4 +1,4 @@
-package crytos.hadoop.batch;
+package kratos.hadoop.batch;
 
 import java.io.IOException;
 
@@ -9,12 +9,12 @@ import org.apache.spark.sql.DataFrame;
 
 import com.google.protobuf.ServiceException;
 
-import crytos.hadoop.ApplicationContext.ApplicationContext;
-import crytos.hadoop.ApplicationContext.Utils;
+import kratos.hadoop.ApplicationContext.ApplicationContext;
+import kratos.hadoop.ApplicationContext.Utils;
 
 public class HiveToHBaseJob {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, Exception{
 		
 		
 		ApplicationContext app = ApplicationContext.getInstance();

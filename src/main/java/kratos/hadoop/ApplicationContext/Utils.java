@@ -1,4 +1,4 @@
-package crytos.hadoop.ApplicationContext;
+package kratos.hadoop.ApplicationContext;
 
 import java.io.IOException;
 
@@ -12,10 +12,13 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.Row;
 
+import com.google.protobuf.ServiceException;
+
 import scala.Tuple2;
 
 public class Utils {
 	
+  public static ApplicationContext app = ApplicationContext.getInstance();
 	
 	static public DataFrame getHiveData(ApplicationContext app, String query){
 		return app.getHiveInstance(app.getSparkContext().sc()).sql(query);
@@ -23,9 +26,9 @@ public class Utils {
 	
 	
 	@SuppressWarnings("serial")
-	static public void storeCustomersDataToHbase(DataFrame df) throws IOException{
+	static public void storeCustomersDataToHbase(DataFrame df) throws IOException, Exception{
 		
-		Configuration conf = ApplicationContext.getInstance().getHBaseNewAPIConfiguration();
+		Configuration conf = app.getHBaseNewAPIConfiguration();
 		conf.set(TableOutputFormat.OUTPUT_TABLE, Constants.HBASE_CUSTOMERS_TABLE_NAME);
 		
 		JavaPairRDD<ImmutableBytesWritable, Put> hbasePuts = df.toJavaRDD().mapToPair(new PairFunction<Row, ImmutableBytesWritable, Put>() {
