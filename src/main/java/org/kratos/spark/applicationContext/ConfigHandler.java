@@ -1,11 +1,11 @@
-package kratos.hadoop.ApplicationContext;
+package org.kratos.spark.applicationContext;
 
 /**
- * Created by cloudera on 6/17/16.
+ * 
+ * @author kratos
+ *
  */
-public interface Constants {
-
-  // String DB_PROPERTIES_FILE_NAME = "/properties/vm-cloudera.properties";
+public interface ConfigHandler {
 
   String HIVE_DB_NAME = "foodmart";
   String HIVE_CUSTOMERS_TABLE_NAME = "customers";
@@ -13,4 +13,10 @@ public interface Constants {
   String HBASE_CUSTOMERS_TABLE_NAME = "customers";
 
   String HBASE_ZOOKEEPER_QUORUM = "hbase.zookeeper.quorum";
+  
+  
+  default void getConf() {
+	  ApplicationContext.getInstance().getLogger().info("Hello from default");
+  }
+  
 }
