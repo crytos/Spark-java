@@ -1,4 +1,4 @@
-package kratos.hadoop.ApplicationContext;
+package org.kratos.spark.applicationContext;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,11 +12,10 @@ import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.mapreduce.TableOutputFormat;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.spark.SparkConf;
-import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.sql.SQLContext;
-import org.apache.spark.sql.hive.HiveContext;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.streaming.Duration;
+import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +27,8 @@ public class ApplicationContext {
   }
 
   /**
-   * 
-   * @return
+   * Custom entry point to spark application
+   * @return app
    */
   static public ApplicationContext getInstance() {
     if (app == null) {
@@ -37,41 +36,34 @@ public class ApplicationContext {
     }
     return app;
   }
+  
+  /**
+   * 
+   * @return singleton spark session
+   */
+  public SparkSession getSparkSession() {
+	  return SparkSession.builder().enableHiveSupport().getOrCreate();
+  }
+  
+  /**
+   * 
+   * @param batchDuration
+   * @return
+   */
+  public JavaStreamingContext getStreamingContext(Duration batchDuration) {
+	  if(jstreamingContext == null)
+		  jstreamingContext = new JavaStreamingContext(app.getSparkContext(), batchDuration);
+	  return jstreamingContext;
+  }
 
   /**
    * 
-   * @return
+   * @return JavaSparkContext given already existing spark session
    */
   public JavaSparkContext getSparkContext() {
-    if (sparkContext == null) {
-      sparkContext = new JavaSparkContext(new SparkConf());
-    }
-    return sparkContext;
-  }
-
-  /**
-   * 
-   * @param javaSparkContext
-   * @return
-   */
-  public SQLContext getInstance(JavaSparkContext javaSparkContext) {
-
-    if (sqlInstance == null) {
-      sqlInstance = new SQLContext(javaSparkContext);
-    }
-    return sqlInstance;
-  }
-
-  /**
-   * 
-   * @param sparkContext
-   * @return
-   */
-  public HiveContext getHiveInstance(SparkContext sparkContext) {
-    if (hiveInstance == null) {
-      hiveInstance = new HiveContext(sparkContext);
-    }
-    return hiveInstance;
+    if (jsparkContext == null) 
+      jsparkContext = new JavaSparkContext(app.getSparkSession().sparkContext());
+    return jsparkContext;
   }
 
   /**
@@ -89,7 +81,7 @@ public class ApplicationContext {
     if (conf == null)
       conf = HBaseConfiguration.create();
 
-    conf.set(Constants.HBASE_ZOOKEEPER_QUORUM, "");
+    conf.set(ConfigHandler.HBASE_ZOOKEEPER_QUORUM, "");
 
     HBaseAdmin.checkHBaseAvailable(conf);
     logger.info("HBase is running !");
@@ -131,9 +123,8 @@ public class ApplicationContext {
   static private ApplicationContext app = null;
   static private Configuration conf = null;
   static private Properties properties = null;
-  static private JavaSparkContext sparkContext = null;
-  static private SQLContext sqlInstance = null;
-  static private HiveContext hiveInstance = null;
+  static private JavaSparkContext jsparkContext = null;
+  static private JavaStreamingContext jstreamingContext = null;
   static private Logger logger = LoggerFactory.getLogger(ApplicationContext.class);
-
+  
 }
