@@ -4,9 +4,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>crytos.hadoop</groupId>
-	<artifactId>spark.practice</artifactId>
+	<groupId>org.kratos.spark</groupId>
+	<artifactId>mastering-spark</artifactId>
 	<version>0.1</version>
+	<packaging>pom</packaging>
 
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -28,8 +29,6 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<!-- <archive> <manifest> <mainClass>crytos.hadoop.batch.{$className}</mainClass> 
-						</manifest> </archive> -->
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
@@ -76,7 +75,6 @@
 			<version>2.4.0</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-hive_2.10</artifactId>
@@ -96,4 +94,9 @@
 		</dependency>
 
 	</dependencies>
+	<modules>
+		<module>srp-kafka</module>
+		<module>common-core</module>
+		<module>srp-spark-streaming-kafka</module>
+	</modules>
 </project>
