@@ -14,34 +14,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 public class SrpAuthentication {
-	
-	
+
 	private SrpAuthentication() {}
-	
+
 	public static SrpAuthentication getInstance() {
-		if(srp == null)
+		if (srp == null)
 			srp = new SrpAuthentication();
-		
 		return srp;
 	}
-	
-	/**
-	 * Domain name
-	 * 
-	 */
-	final String DOMAIN = "https://api.structuredretailproducts.com";
-
-	/**
-	 * Public API key
-	 * 
-	 */
-	final String PUBLIC_API_KEY = "";
-
-	/**
-	 * Private API key
-	 * 
-	 */
-	final String PRIVATE_API_KEY = "";
 
 	/**
 	 * SHA1 Sign the string
@@ -52,14 +32,13 @@ public class SrpAuthentication {
 	 */
 	public String _hmacSha1(String baseString) throws Exception {
 
-		String keyString = this.PRIVATE_API_KEY;
+		String keyString = ConfigHandler.PRIVATE_API_KEY;
 		SecretKey secretKey = null;
 
 		byte[] keyBytes = keyString.getBytes();
 		secretKey = new SecretKeySpec(keyBytes, "hmacSha1");
 
 		Mac mac = Mac.getInstance("hmacSha1");
-
 		mac.init(secretKey);
 
 		byte[] text = baseString.getBytes();
@@ -80,7 +59,7 @@ public class SrpAuthentication {
 		long lngTimestamp = System.currentTimeMillis() / 1000L;
 		String strStringToSign = "GET " + strUri + " " + strContentLength + " " + strContentMD5 + " " + lngTimestamp;
 		String strSignature = this._hmacSha1(strStringToSign);
-		String strAuth = "SRP " + this.PUBLIC_API_KEY + ":" + strSignature + ":" + lngTimestamp;
+		String strAuth = "SRP " + ConfigHandler.PUBLIC_API_KEY + ":" + strSignature + ":" + lngTimestamp;
 		return strAuth;
 	}
 
@@ -92,12 +71,8 @@ public class SrpAuthentication {
 	public String fetch(String strUri) {
 		try {
 			HttpClient client = HttpClientBuilder.create().build();
-			HttpGet request = new HttpGet(this.DOMAIN + strUri);
 
-			// for a get request strContentLength,strContentMD5 are always empty string, DO
-			// NOT use null,
-			// it will create a wrong signature key
-
+			HttpGet request = new HttpGet(ConfigHandler.DOMAIN + strUri);
 			request.setHeader("Authorization", this._getAuthHeader(strUri, "", ""));
 
 			HttpResponse response = client.execute(request);
@@ -111,11 +86,12 @@ public class SrpAuthentication {
 			}
 
 			return builder.toString();
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	private static SrpAuthentication srp = null;
 
 }
