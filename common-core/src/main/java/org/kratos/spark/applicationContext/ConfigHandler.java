@@ -7,8 +7,9 @@ package org.kratos.spark.applicationContext;
  */
 public interface ConfigHandler {
 
-	String KAFKA_BOOTSTRAP_SERVER = "spark.kafka.bootstrap.server";
-	
+	/**
+	 * coming soon
+	 */
 	default void getConf() {
 		ApplicationContext.getInstance().getLogger().info("Hello from default");
 	}
